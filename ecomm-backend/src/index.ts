@@ -1,14 +1,17 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import cors from 'cors'
-
-dotenv.config();
+import connectToDB from './config/mongodb';
+import connectToCloudinary from './config/cloudinary';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+connectToDB()
+connectToCloudinary
 
 app.use(cors())
 app.use(express.json())
+
 
 app.get('/', (req, res) => {
   res.send('Hello, TypeScript!');
