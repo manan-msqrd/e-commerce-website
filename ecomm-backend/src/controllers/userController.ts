@@ -38,6 +38,7 @@ export const registerUser = async (req: Request, res: Response) => {
         });
 
         res.status(201).json({
+            success: true,
             _id: user._id,
             name: user.name,
             email: user.email,
@@ -62,6 +63,7 @@ export const loginUser = async (req: Request, res: Response) => {
             });
 
             res.json({
+                success: true,
                 _id: user._id,
                 name: user.name,
                 email: user.email,

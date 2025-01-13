@@ -5,6 +5,7 @@ import connectToDB from './config/mongodb';
 import connectToCloudinary from './config/cloudinary';
 import userRouter from './routes/userRoute';
 import productRouter from './routes/productRoute';
+import cartRouter from './routes/cartRoute';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,8 +16,9 @@ app.use(cors())
 app.use(express.json())
 
 //api endpoints
-app.use('/api/users', userRouter)
+app.use('/api/user', userRouter)
 app.use('/api/products', productRouter)
+app.use('/api/cart', cartRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello, TypeScript!');

@@ -43,6 +43,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             expiresIn: '30d',
         });
         res.status(201).json({
+            success: true,
             _id: user._id,
             name: user.name,
             email: user.email,
@@ -65,6 +66,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 expiresIn: '30d',
             });
             res.json({
+                success: true,
                 _id: user._id,
                 name: user.name,
                 email: user.email,
@@ -82,9 +84,15 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.loginUser = loginUser;
 // Admin Login 
 const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
     try {
-        const user = yield userModel_1.default.findOne({ email });
+        const { email, password } = req.body;
+        if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+            const token = jsonwebtoken_1.default.sign(email + password, process.env.JWT_SECRET);
+            res.json({ success: true, token });
+        }
+        else {
+            res.json({ success: false, message: "Invalid credentials" });
+        }
     }
     catch (error) {
         res.status(500).json({ message: 'Server error' });

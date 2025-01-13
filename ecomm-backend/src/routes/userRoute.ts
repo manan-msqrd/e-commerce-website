@@ -5,6 +5,7 @@ import { adminLogin, loginUser, registerUser } from "../controllers/userControll
 const userRouter = express.Router();
 
 userRouter.post('/login', loginUser);
-userRouter.post('/register', registerUser)
+userRouter.post('/register', registerUser);
+userRouter.post('/admin', adminLogin);
 
 export default userRouter

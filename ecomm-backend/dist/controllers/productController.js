@@ -25,10 +25,8 @@ const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const image4 = files.image4 && files.image4[0];
         const images = [image1, image2, image3, image4].
             filter((image) => image !== undefined);
-        console.log("images", images);
         let imageUrl = yield Promise.all(images.map((item) => __awaiter(void 0, void 0, void 0, function* () {
             let result = yield cloudinary_1.v2.uploader.upload(item.path, { resource_type: 'image' });
-            console.log(result.secure_url);
             return result.secure_url;
         })));
         const productData = {
@@ -52,11 +50,33 @@ const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.addProduct = addProduct;
 const listProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const products = yield productModels_1.default.find({});
+        res.json({ success: true, products });
+    }
+    catch (error) {
+        res.json({ success: false, message: error.message });
+    }
 });
 exports.listProducts = listProducts;
 const removeProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield productModels_1.default.findByIdAndDelete(req.body.id);
+        res.json({ success: true, message: "Product deleted successfully" });
+    }
+    catch (error) {
+        res.json({ success: false, message: error.message });
+    }
 });
 exports.removeProducts = removeProducts;
 const singleProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { productId } = req.body;
+        const product = yield productModels_1.default.findById(productId);
+        res.json({ success: true, product });
+    }
+    catch (error) {
+        res.json({ success: false, message: error.message });
+    }
 });
 exports.singleProduct = singleProduct;
