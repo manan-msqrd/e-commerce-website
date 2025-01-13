@@ -7,11 +7,18 @@ const express_1 = __importDefault(require("express"));
 require("dotenv/config");
 const cors_1 = __importDefault(require("cors"));
 const mongodb_1 = __importDefault(require("./config/mongodb"));
+const cloudinary_1 = __importDefault(require("./config/cloudinary"));
+const userRoute_1 = __importDefault(require("./routes/userRoute"));
+const productRoute_1 = __importDefault(require("./routes/productRoute"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 (0, mongodb_1.default)();
+(0, cloudinary_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+//api endpoints
+app.use('/api/users', userRoute_1.default);
+app.use('/api/products', productRoute_1.default);
 app.get('/', (req, res) => {
     res.send('Hello, TypeScript!');
 });

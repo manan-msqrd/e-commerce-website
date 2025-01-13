@@ -3,15 +3,20 @@ import 'dotenv/config';
 import cors from 'cors'
 import connectToDB from './config/mongodb';
 import connectToCloudinary from './config/cloudinary';
+import userRouter from './routes/userRoute';
+import productRouter from './routes/productRoute';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 connectToDB()
-connectToCloudinary
+connectToCloudinary()
 
 app.use(cors())
 app.use(express.json())
 
+//api endpoints
+app.use('/api/users', userRouter)
+app.use('/api/products', productRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello, TypeScript!');
