@@ -11,6 +11,7 @@ const cloudinary_1 = __importDefault(require("./config/cloudinary"));
 const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const productRoute_1 = __importDefault(require("./routes/productRoute"));
 const cartRoute_1 = __importDefault(require("./routes/cartRoute"));
+const orderRoute_1 = __importDefault(require("./routes/orderRoute"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 (0, mongodb_1.default)();
@@ -21,6 +22,7 @@ app.use(express_1.default.json());
 app.use('/api/user', userRoute_1.default);
 app.use('/api/products', productRoute_1.default);
 app.use('/api/cart', cartRoute_1.default);
+app.use('/api/order', orderRoute_1.default);
 app.get('/', (req, res) => {
     res.send('Hello, TypeScript!');
 });

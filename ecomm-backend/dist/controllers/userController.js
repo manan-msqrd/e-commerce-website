@@ -24,13 +24,16 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const userExists = yield userModel_1.default.findOne({ email });
         if (userExists) {
             res.status(400).json({ message: 'User already exists' });
+            return;
         }
         // validating email format & strong password
         if (!validator_1.default.isEmail(email)) {
             res.json({ success: false, message: "Please enter a valid email" });
+            return;
         }
         if (password.length < 8) {
             res.json({ success: false, message: "Please enter a strong password" });
+            return;
         }
         const salt = yield bcrypt_1.default.genSalt(10);
         const hashedPassword = yield bcrypt_1.default.hash(password, salt);
@@ -49,10 +52,12 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             email: user.email,
             token,
         });
+        return;
     }
     catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message });
+        return;
     }
 });
 exports.registerUser = registerUser;
@@ -72,9 +77,11 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 email: user.email,
                 token,
             });
+            return;
         }
         else {
             res.status(400).json({ message: 'Invalid email or password' });
+            return;
         }
     }
     catch (error) {

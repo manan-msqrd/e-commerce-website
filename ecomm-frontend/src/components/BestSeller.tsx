@@ -24,13 +24,12 @@ const BestSeller = () => {
         }
     
         const { products } = context;
-        console.log({products});
         
         const [bestSellers, setBestSellers] = useState<Product[]>([]);
     
         useEffect(() => {
             const bestProduct = products.filter((item: Product) => item.bestseller);
-            console.log("bestProduct", bestProduct);
+            // console.log("bestProduct", bestProduct);
             
             setBestSellers(bestProduct.slice(0, 5));
         }, [products]);

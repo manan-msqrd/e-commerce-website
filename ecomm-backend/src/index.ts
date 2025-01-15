@@ -6,6 +6,7 @@ import connectToCloudinary from './config/cloudinary';
 import userRouter from './routes/userRoute';
 import productRouter from './routes/productRoute';
 import cartRouter from './routes/cartRoute';
+import orderRouter from './routes/orderRoute';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,7 @@ app.use(express.json())
 app.use('/api/user', userRouter)
 app.use('/api/products', productRouter)
 app.use('/api/cart', cartRouter)
+app.use('/api/order', orderRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello, TypeScript!');

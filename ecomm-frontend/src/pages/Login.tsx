@@ -23,7 +23,6 @@ const Login = () => {
     event?.preventDefault()
     try {
       if(currentState === 'Sign Up') {
-        console.log("backendUrl in login", backendUrl)
         const response = await axios.post(backendUrl + '/api/user/register', {name, email, password});
         if(response.data.success){
           setToken(response.data.token);
@@ -43,7 +42,6 @@ const Login = () => {
       }
     } catch (error:any) {
       console.log(error.message);
-
       toast.error(error.message)
     }
   }

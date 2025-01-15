@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-type Product = {
+export type Product = {
     _id: string;
     image: string[];
     name: string;
@@ -14,6 +14,8 @@ type Product = {
     sizes?:string[];
     date?:number;
     bestSeller?:boolean;
+    size?:string;
+    quantity?:string | number;
 };
 
 type ShopContextType = {
@@ -123,8 +125,8 @@ const ShopContextProvider = (props: any) => {
                     if(cartItems[items][item] > 0){
                         totalAmount += cartItems[items][item] * (itemInfo?.price ?? 0);
                     }
-                } catch(error) {
-
+                } catch(error:any) {
+                    toast.error(error.message)
                 }
             }
         }

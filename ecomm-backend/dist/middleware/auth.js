@@ -7,7 +7,7 @@ exports.authUser = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authUser = (req, res, next) => {
     const token = req.headers["token"];
-    console.log(token);
+    // console.log(token);
     if (!token || typeof token !== "string") {
         res.status(401).json({ success: false, message: "User not authorized" });
         return;

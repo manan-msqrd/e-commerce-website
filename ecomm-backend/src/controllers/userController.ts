@@ -14,14 +14,19 @@ export const registerUser = async (req: Request, res: Response) => {
 
         if (userExists) {
             res.status(400).json({ message: 'User already exists' });
+            return;
         }
 
         // validating email format & strong password
         if (!validator.isEmail(email)) {
             res.json({success:false, message:"Please enter a valid email"})
+            return;
+
             }
         if (password.length < 8) {
             res.json({success:false, message:"Please enter a strong password"})
+            return;
+
         }
         
         const salt = await bcrypt.genSalt(10);
@@ -44,9 +49,12 @@ export const registerUser = async (req: Request, res: Response) => {
             email: user.email,
             token,
         });
+        return;
     } catch (error: any) {
         console.log(error)
         res.status(500).json({ message: error.message });
+        return;
+
     }
 };
 
@@ -69,8 +77,11 @@ export const loginUser = async (req: Request, res: Response) => {
                 email: user.email,
                 token,
             });
+            return;
+
         } else {
             res.status(400).json({ message: 'Invalid email or password' });
+            return;
         }
     } catch (error) {
         res.status(500).json({ message: 'Server error' });

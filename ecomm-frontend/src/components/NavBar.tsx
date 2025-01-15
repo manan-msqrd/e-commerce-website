@@ -5,17 +5,18 @@ import cartIcon from "../assets/cart_icon.png"
 import menuIcon from "../assets/menu_icon.png"
 import dropdownIcon from "../assets/dropdown_icon.png"
  
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useContext, useState } from "react"
 import { ShopContext } from "../context/ShopContext"
 
 const NavBar = () => {
     const [visible, setVisible] = useState(false)
+    const location = useLocation();
 
     const context = useContext(ShopContext);
 
     if (!context) {
-        return <div>Loading...</div>; // Handle the case where context is null
+        return <div>Loading...</div>;
     }
 
     const {setShowSearch, getCartCount, setCartItems, navigate, token, setToken} = context;
@@ -72,7 +73,8 @@ const NavBar = () => {
       </ul>
 
       <div className="flex items-center gap-6">
-          <img onClick={() => setShowSearch(true)} src={searchIcon} className="w-5 cursor-pointer"/>
+          {location.pathname === '/collection' && 
+          <img onClick={() => setShowSearch(true)} src={searchIcon} className="w-5 cursor-pointer"/>}
 
           <div className="group relative">
             <img onClick={() => token ? null : navigate('/login')} src={profileIcon} className="w-5 cursor-pointer"/>
@@ -80,8 +82,8 @@ const NavBar = () => {
             {token && 
             <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
                 <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-600 rounded-md">
-                    <p className="cursor-pointer hover:text-black">My Profile</p>
-                    <p onClick={() => navigate('/orders')} className="cursor-pointer hover:text-black">Orders</p>
+                    {/* <p className="cursor-pointer hover:text-black">My Profile</p> */}
+                    <p onClick={() => navigate('/orders')} className="cursor-pointer hover:text-black">My Orders</p>
                     <p onClick={logout} className="cursor-pointer hover:text-black">Logout</p>
                 </div>
             </div>}
