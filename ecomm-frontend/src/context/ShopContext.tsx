@@ -10,7 +10,7 @@ export type Product = {
     price: number;
     description?:string;
     category?:string;
-    subCategory?:string;
+    subcategory?:string;
     sizes?:string[];
     date?:number;
     bestSeller?:boolean;

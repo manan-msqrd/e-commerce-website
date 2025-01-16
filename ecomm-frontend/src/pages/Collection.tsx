@@ -11,7 +11,7 @@ type Product = {
   price: number;
   description?:string;
   category?:string;
-  subCategory?:string;
+  subcategory?:string;
   sizes?:string[];
   date?:number;
   bestSeller?:boolean;
@@ -29,7 +29,7 @@ const Collection = () => {
     const [showFilter, setShowFilter] = useState<boolean>(false)
     const [filterProducts, setFilterProducts] = useState<Product[]>([])
     const [category, setCategory] = useState<string[]>([])
-    const [subCategory, setSubCategory] = useState<string[]>([])
+    const [subcategory, setSubcategory] = useState<string[]>([])
     const [sort, setSort] = useState<string>('')
 
     const toggleCategory = (e : any) => {
@@ -41,10 +41,10 @@ const Collection = () => {
     }
 
     const toggleSubCategory = (e : any) => {
-      if (subCategory.includes(e.target.value)) {
-        setSubCategory(subCategory.filter((item) => item !== e.target.value))
+      if (subcategory.includes(e.target.value)) {
+        setSubcategory(subcategory.filter((item) => item !== e.target.value))
       } else {
-        setSubCategory([...subCategory, e.target.value])
+        setSubcategory([...subcategory, e.target.value])
       }
     }
 
@@ -60,8 +60,8 @@ const Collection = () => {
         productCopy = productCopy.filter((item) => item.category && category.includes(item.category))
       }
 
-      if(subCategory.length > 0) {
-        productCopy = productCopy.filter((item) => item.subCategory && subCategory.includes(item.subCategory))
+      if(subcategory.length > 0) {
+        productCopy = productCopy.filter((item) => item.subcategory && subcategory.includes(item.subcategory))
       }
 
       setFilterProducts(productCopy);
@@ -84,7 +84,7 @@ const Collection = () => {
 
     useEffect(() => {
       applyFilter();
-    }, [category, subCategory, showSearch, search, products])
+    }, [category, subcategory, showSearch, search, products])
 
     useEffect(() => {
       sortProducts(sort);

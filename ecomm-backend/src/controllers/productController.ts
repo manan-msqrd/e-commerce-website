@@ -2,9 +2,15 @@ import { Request, Response } from "express"
 import {v2 as cloudinary} from "cloudinary"
 import productModel from "../models/productModels";
 
-export const addProduct = async (req: Request, res: Response) => {
+export const addProduct = async (req: Request, res: Response): Promise<void> => {
     try {
-        const {name, description, sizes, bestseller, price, category, subcategory} = req.body;
+        const { name, description, sizes, bestseller, price, category, subcategory } = req.body;
+
+        // Validate required fields
+        if (!name || !description || !sizes || !price || !category) {
+            res.status(400).json({ success: false, message: "Missing required fields" });
+            return;
+        }
 
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
         const image1 = files.image1 && files.image1[0];
@@ -37,42 +43,71 @@ export const addProduct = async (req: Request, res: Response) => {
         const product = new productModel(productData);
         await product.save();
 
-        res.json({success: true, message: "Product Added Successfully"})
+        res.status(201).json({success: true, message: "Product Added Successfully"})
 
-    } catch (error:any) {
-        res.json({success: false, message: error.message})
+    } catch (error: any) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 }
 
-export const listProducts = async (req: Request, res: Response) => {
+export const listProducts = async (req: Request, res: Response): Promise<void> => {
     try {
         const products = await productModel.find({});
 
-        res.json({success:true,products})
+        res.status(200).json({ success: true, products });
 
-    } catch (error:any) {
-        res.json({success: false, message: error.message})
+    } catch (error: any) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 }
 
 export const removeProducts = async (req: Request, res: Response) => {
+    const { id } = req.body;
+
+    if (!id) {
+        res.status(400).json({ success: false, message: "Product ID is required" });
+        return;
+    }
+
     try {
-        await productModel.findByIdAndDelete(req.body.id);
-        res.json({success:true, message: "Product deleted successfully"})
-    } catch (error:any) {
-        res.json({success: false, message: error.message})
+        const deletedProduct = await productModel.findByIdAndDelete(id);
+
+        if (!deletedProduct) {
+            res.status(404).json({ success: false, message: "Product not found" });
+            return;
+        }
+
+        res.status(200).json({ success: true, message: "Product deleted successfully" });
+
+    } catch (error: any) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 }
 
-export const singleProduct = async (req: Request, res: Response) => {
-    try {
-        const {productId} = req.body;
+export const singleProduct = async (req: Request, res: Response): Promise<void> => {
+        
+    const {productId} = req.body;
+    if (!productId) {
+        res.status(400).json({ success: false, message: "Product ID is required" });
+        return;
+    }
 
+    try {
         const product = await productModel.findById(productId);
 
-        res.json({success:true, product})
-    } catch (error:any) {
-        res.json({success: false, message: error.message})
+        if (!product) {
+            res.status(404).json({ success: false, message: "Product not found" });
+            return;
+        }
+
+        res.status(200).json({ success: true, product });
+
+    } catch (error: any) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 }
 
