@@ -86,6 +86,10 @@ const PlaceOrder = () => {
 
     } catch (error:any) {
       toast.error(error.message)
+      if(error.response){
+        console.log(error.response.data.message);
+        toast.error(error.response.data.message)
+      }
     }
   }
 

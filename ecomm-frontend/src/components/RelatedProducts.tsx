@@ -10,13 +10,13 @@ type Product = {
   price: number;
   description?:string;
   category?:string;
-  subCategory?:string;
+  subcategory?:string;
   sizes?:string[];
   date?:number;
   bestSeller?:boolean;
 };
 
-const RelatedProducts = ({category, subCategory } : { category?: string; subCategory?: string }) => {
+const RelatedProducts = ({category, subcategory } : { category?: string; subcategory?: string }) => {
 
     const context = useContext(ShopContext)
 
@@ -33,7 +33,7 @@ const RelatedProducts = ({category, subCategory } : { category?: string; subCate
  
           productsCopy = productsCopy.filter((item) => category === item.category);
 
-          productsCopy = productsCopy.filter((item) => item.subCategory === subCategory);
+          productsCopy = productsCopy.filter((item) => item.subcategory === subcategory);
           
           setRelated(productsCopy.slice(0,5));
         }

@@ -92,7 +92,7 @@ const ShopContextProvider = (props: any) => {
                         totalCount += cartItems[items][item];
                     }
                 } catch (error) {
-
+                    console.log(error)
                 }
             }
         }
@@ -110,7 +110,10 @@ const ShopContextProvider = (props: any) => {
             try {
                 await axios.post(backendUrl + '/api/cart/update', {itemId, size, quantity}, {headers:{token}})
             } catch (error:any) {
-                toast.error(error.message)
+                if(error.response){
+                    console.log(error.response.data.message);
+                    toast.error(error.response.data.message)
+                  }
             }
         }
     }
@@ -142,7 +145,10 @@ const ShopContextProvider = (props: any) => {
                 toast.error(response.data.message)
             }
         } catch (error:any) {
-            toast.error(error.message)
+            if(error.response){
+                console.log(error.response.data.message);
+                toast.error(error.response.data.message)
+              }
         }
     }
 
@@ -153,7 +159,10 @@ const ShopContextProvider = (props: any) => {
                 setCartItems(response.data.cartData);
             }
         } catch (error:any) {
-          toast.error(error.message);  
+          if(error.response){
+            console.log(error.response.data.message);
+            toast.error(error.response.data.message)
+          }
         }
     }
 
