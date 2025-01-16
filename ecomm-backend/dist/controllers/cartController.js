@@ -17,8 +17,17 @@ const userModel_1 = __importDefault(require("../models/userModel"));
 const addToCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId, itemId, size } = req.body;
+        // Validate required fields
+        if (!userId || !itemId || !size) {
+            res.status(400).json({ success: false, message: "Missing required fields: userId, itemId, or size" });
+            return;
+        }
         const userData = yield userModel_1.default.findById(userId);
-        let cartData = yield userData.cartData;
+        if (!userData) {
+            res.status(404).json({ success: false, message: "User not found" });
+            return;
+        }
+        let cartData = userData.cartData || {};
         if (cartData[itemId]) {
             if (cartData[itemId][size]) {
                 cartData[itemId][size] += 1;
@@ -32,36 +41,57 @@ const addToCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             cartData[itemId][size] = 1;
         }
         yield userModel_1.default.findByIdAndUpdate(userId, { cartData });
-        res.json({ success: true, message: "Successfully added to cart" });
+        res.status(200).json({ success: true, message: "Successfully added to cart" });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.addToCart = addToCart;
 const updateCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId, itemId, size, quantity } = req.body;
+        // Validate required fields
+        if (!userId || !itemId || !size || quantity === undefined) {
+            res.status(400).json({ success: false, message: "Missing required fields: userId, itemId, size, or quantity" });
+            return;
+        }
         const userData = yield userModel_1.default.findById(userId);
+        if (!userData) {
+            res.status(404).json({ success: false, message: "User not found" });
+            return;
+        }
         let cartData = yield userData.cartData;
         cartData[itemId][size] = quantity;
         yield userModel_1.default.findByIdAndUpdate(userId, { cartData });
-        res.json({ success: true, message: "Successfully updated cart" });
+        res.status(200).json({ success: true, message: "Successfully updated cart" });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.updateCart = updateCart;
 const getUserCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.body;
+        // Validate required fields
+        if (!userId) {
+            res.status(400).json({ success: false, message: "Missing required field: userId" });
+            return;
+        }
         const userData = yield userModel_1.default.findById(userId);
+        if (!userData) {
+            res.status(404).json({ success: false, message: "User not found" });
+            return;
+        }
         let cartData = yield userData.cartData;
-        res.json({ success: true, cartData });
+        res.status(200).json({ success: true, cartData });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.getUserCart = getUserCart;

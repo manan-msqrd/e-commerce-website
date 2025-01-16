@@ -18,6 +18,11 @@ const productModels_1 = __importDefault(require("../models/productModels"));
 const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, description, sizes, bestseller, price, category, subcategory } = req.body;
+        // Validate required fields
+        if (!name || !description || !sizes || !price || !category) {
+            res.status(400).json({ success: false, message: "Missing required fields" });
+            return;
+        }
         const files = req.files;
         const image1 = files.image1 && files.image1[0];
         const image2 = files.image2 && files.image2[0];
@@ -42,41 +47,62 @@ const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         };
         const product = new productModels_1.default(productData);
         yield product.save();
-        res.json({ success: true, message: "Product Added Successfully" });
+        res.status(201).json({ success: true, message: "Product Added Successfully" });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.addProduct = addProduct;
 const listProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const products = yield productModels_1.default.find({});
-        res.json({ success: true, products });
+        res.status(200).json({ success: true, products });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.listProducts = listProducts;
 const removeProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    if (!id) {
+        res.status(400).json({ success: false, message: "Product ID is required" });
+        return;
+    }
     try {
-        yield productModels_1.default.findByIdAndDelete(req.body.id);
-        res.json({ success: true, message: "Product deleted successfully" });
+        const deletedProduct = yield productModels_1.default.findByIdAndDelete(id);
+        if (!deletedProduct) {
+            res.status(404).json({ success: false, message: "Product not found" });
+            return;
+        }
+        res.status(200).json({ success: true, message: "Product deleted successfully" });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.removeProducts = removeProducts;
 const singleProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { productId } = req.body;
+    if (!productId) {
+        res.status(400).json({ success: false, message: "Product ID is required" });
+        return;
+    }
     try {
-        const { productId } = req.body;
         const product = yield productModels_1.default.findById(productId);
-        res.json({ success: true, product });
+        if (!product) {
+            res.status(404).json({ success: false, message: "Product not found" });
+            return;
+        }
+        res.status(200).json({ success: true, product });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.singleProduct = singleProduct;

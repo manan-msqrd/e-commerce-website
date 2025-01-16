@@ -20,23 +20,28 @@ const validator_1 = __importDefault(require("validator"));
 // Register user
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+        res.status(200).json({ success: false, message: 'All fields are required' });
+        return;
+    }
     try {
+        if (!validator_1.default.isEmail(email)) {
+            res.status(400).json({ success: false, message: 'Invalid email format' });
+            return;
+        }
+        if (!validator_1.default.isStrongPassword(password)) {
+            res.status(400).json({
+                success: false,
+                message: 'Password must be at least 8 characters long and include uppercase, lowercase, numbers, and symbols',
+            });
+            return;
+        }
         const userExists = yield userModel_1.default.findOne({ email });
         if (userExists) {
-            res.status(400).json({ message: 'User already exists' });
+            res.status(409).json({ success: false, message: 'User already exists' });
             return;
         }
-        // validating email format & strong password
-        if (!validator_1.default.isEmail(email)) {
-            res.json({ success: false, message: "Please enter a valid email" });
-            return;
-        }
-        if (password.length < 8) {
-            res.json({ success: false, message: "Please enter a strong password" });
-            return;
-        }
-        const salt = yield bcrypt_1.default.genSalt(10);
-        const hashedPassword = yield bcrypt_1.default.hash(password, salt);
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         const user = yield userModel_1.default.create({
             name,
             email,
@@ -52,60 +57,67 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             email: user.email,
             token,
         });
-        return;
     }
     catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
-        return;
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 exports.registerUser = registerUser;
 // Login user
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
+    if (!email || !password) {
+        res.status(400).json({ success: false, message: 'Email and password are required' });
+        return;
+    }
     try {
         const user = yield userModel_1.default.findOne({ email });
-        if (user && (yield bcrypt_1.default.compare(password, user.password))) {
-            const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
-                expiresIn: '30d',
-            });
-            res.json({
-                success: true,
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                token,
-            });
+        if (!user || !(yield bcrypt_1.default.compare(password, user.password))) {
+            res.status(401).json({ success: false, message: 'Invalid email or password' });
             return;
         }
-        else {
-            res.status(400).json({ message: 'Invalid email or password' });
-            return;
-        }
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '30d',
+        });
+        res.json({
+            success: true,
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            token,
+        });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 exports.loginUser = loginUser;
 // Admin Login 
 const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        res.status(400).json({ success: false, message: 'Email and password are required' });
+        return;
+    }
     try {
-        const { email, password } = req.body;
         if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
             const token = jsonwebtoken_1.default.sign(email + password, process.env.JWT_SECRET);
-            res.json({ success: true, token });
+            res.status(200).json({ success: true, token });
         }
         else {
-            res.json({ success: false, message: "Invalid credentials" });
+            res.status(401).json({ success: false, message: "Invalid credentials" });
         }
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 exports.adminLogin = adminLogin;
-module.exports = {
-    loginUser: exports.loginUser, registerUser: exports.registerUser, adminLogin: exports.adminLogin
+exports.default = {
+    registerUser: exports.registerUser,
+    loginUser: exports.loginUser,
+    adminLogin: exports.adminLogin,
 };

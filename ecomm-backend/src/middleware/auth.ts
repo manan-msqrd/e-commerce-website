@@ -6,7 +6,7 @@ export const authUser = (req: Request, res: Response, next: NextFunction): void 
   // console.log(token);
   
   if (!token || typeof token !== "string") {
-    res.status(401).json({ success: false, message: "User not authorized" });
+    res.status(401).json({ success: false, message: "User not logged in" });
     return;
   }
 

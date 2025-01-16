@@ -10,7 +10,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-        res.status(400).json({ success: false, message: 'All fields are required' });
+        res.status(200).json({ success: false, message: 'All fields are required' });
         return;
     }
 

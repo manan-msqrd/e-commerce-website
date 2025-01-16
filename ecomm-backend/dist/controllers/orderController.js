@@ -18,7 +18,17 @@ const userModel_1 = __importDefault(require("../models/userModel"));
 const placeOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId, amount, items, address } = req.body;
-        console.log("items", items);
+        // Validate required fields
+        if (!userId || !amount || !items || !address) {
+            res.status(400).json({ success: false, message: "Missing required fields: userId, amount, items, or address" });
+            return;
+        }
+        // Check if user exists
+        const user = yield userModel_1.default.findById(userId);
+        if (!user) {
+            res.status(404).json({ success: false, message: "User not found" });
+            return;
+        }
         const orderData = {
             userId,
             items,
@@ -31,10 +41,11 @@ const placeOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const newOrder = new orderModel_1.default(orderData);
         yield newOrder.save();
         yield userModel_1.default.findByIdAndUpdate(userId, { cartData: {} });
-        res.json({ success: true, message: "Order Placed" });
+        res.status(201).json({ success: true, message: "Order placed successfully" });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.placeOrder = placeOrder;
@@ -56,35 +67,49 @@ const placeOrderRazorpay = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.placeOrderRazorpay = placeOrderRazorpay;
 const allOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const orders = orderModel_1.default.find({});
-        res.json({ success: true, orders });
+        const orders = yield orderModel_1.default.find({});
+        res.status(200).json({ success: true, orders });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.allOrders = allOrders;
 const userOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.body;
-        // Execute the query to fetch the actual data
+        // Validate required field
+        if (!userId) {
+            res.status(400).json({ success: false, message: "Missing required field: userId" });
+            return;
+        }
         const orders = yield orderModel_1.default.find({ userId });
-        res.json({ success: true, orders });
+        res.status(200).json({ success: true, orders });
     }
     catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.userOrders = userOrders;
 const updateOrderStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { orderId, status } = req.body;
-        yield orderModel_1.default.findByIdAndUpdate(orderId, { status });
-        res.json({ success: true, message: 'Status Updated'
-        });
+        if (!orderId || !status) {
+            res.status(400).json({ success: false, message: "Missing required fields: orderId or status" });
+            return;
+        }
+        const order = yield orderModel_1.default.findByIdAndUpdate(orderId, { status }, { new: true });
+        if (!order) {
+            res.status(404).json({ success: false, message: "Order not found" });
+            return;
+        }
+        res.status(200).json({ success: true, message: "Order status updated successfully", order });
     }
     catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message || "Server error" });
     }
 });
 exports.updateOrderStatus = updateOrderStatus;
