@@ -2,10 +2,15 @@
   "name": "ecomm-backend",
   "version": "1.0.0",
   "main": "index.js",
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "scripts": {
-    "build": "tsc -b",
-    "start": "node dist/index.js",
-    "dev": "npm run build && npm run start"
+    "build": "rimraf dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +37,8 @@
     "@types/mongoose": "^5.11.96",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.10.5",
-    "@types/validator": "^13.12.2"
+    "@types/validator": "^13.12.2",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^6.0.1"
   }
 }
