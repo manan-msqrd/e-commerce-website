@@ -11,7 +11,7 @@ type Product = {
   price: number;
   description?:string;
   category?:string;
-  subCategory?:string;
+  subcategory?:string;
   sizes?:string[];
   date?:number;
   bestSeller?:boolean;
@@ -113,7 +113,7 @@ const Product = () => {
       </div>
 
       {/* Display Related Products */}
-      <RelatedProducts category={productData.category} subcategory={productData.subCategory}/>
+      <RelatedProducts category={productData.category} subcategory={productData.subcategory}/>
       
     </div>
   ) : <div className='opacity-0'></div>
