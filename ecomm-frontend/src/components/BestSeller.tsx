@@ -40,19 +40,24 @@ const BestSeller = () => {
             <p className="w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600">Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
         </div>
 
-        {/* Rendering Products */}
+        {/* Rendering Products or Skeleton Loader */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
-            {
-                bestSellers.map((item, index) => (
-                    <ProductItem 
-                    key={index} 
-                    _id={item._id} 
-                    image={item.image} 
-                    name={item.name} 
-                    price={item.price} 
-                    />
+            {bestSellers.length === 0
+            ? Array.from({ length: 5 }).map((_, index) => (
+                <div
+                    key={index}
+                    className="h-80 w-full bg-gray-300 animate-pulse rounded"
+                />
                 ))
-            }
+            : bestSellers.map((item, index) => (
+                <ProductItem
+                    key={index}
+                    _id={item._id}
+                    image={item.image}
+                    name={item.name}
+                    price={item.price}
+                />
+                ))}
         </div>
     </div>
   )

@@ -39,17 +39,22 @@ const LatestCollection = () => {
 
         {/* Rendering Products */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
-            {
-                latestProducts.map((item, index) => (
-                    <ProductItem 
-                    key={index} 
-                    _id={item._id} 
-                    image={item.image} 
-                    name={item.name} 
-                    price={item.price} 
-                    />
+            {latestProducts.length === 0
+            ? Array.from({ length: 10 }).map((_, index) => (
+                <div
+                    key={index}
+                    className="h-80 w-full bg-gray-300 animate-pulse rounded"
+                />
                 ))
-            }
+            : latestProducts.map((item, index) => (
+                <ProductItem
+                    key={index}
+                    _id={item._id}
+                    image={item.image}
+                    name={item.name}
+                    price={item.price}
+                />
+                ))}
         </div>
     </div>
   )
