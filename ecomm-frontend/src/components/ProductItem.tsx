@@ -14,7 +14,7 @@ const ProductItem = ({_id, image, name, price} : ProductItemProps) => {
     const context = useContext(ShopContext);
 
     if (!context) {
-        return null; // Handle the case where context is null
+        return null;
     }
 
     const { currency } = context;

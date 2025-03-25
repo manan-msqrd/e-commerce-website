@@ -28,24 +28,21 @@ const Product = () => {
     const {products, currency, addToCart} = context;
 
   const {productId} = useParams();
-  console.log("productId: ",productId)
-  console.log("products: ",products)
   const [productData, setProductData] = useState<any>(false);
   const [image, setImage] = useState<string>('');
   const [size, setSize] = useState<string>('')
 
   const fetchProductsData = async () => {
     const data = products.filter((product: Product) => product._id === productId);
-    console.log("data: ",data)
 
     setProductData(data[0]);
     setImage(data[0].image[0]);
-    // console.log(productData)
+    
   }
 
   useEffect(() => {
     fetchProductsData();
-    // console.log(productData)
+    window.scrollTo(0, 0);
   }, [productId, products])
 
   return productData ? (
